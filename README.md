@@ -1,4 +1,4 @@
-CONSULTA DE USUARIOS ACTIVE DIRECTORY
+**CONSULTA DE USUARIOS ACTIVE DIRECTORY**
 
 Este es un script escrito en powershell, que mediante el complemento RSAT realiza una consulta de usuarios y equipos del actual Directorio Activo de Windows.
 
@@ -43,7 +43,6 @@ Presione 'Enter' para realizar otra consulta o 'R' para refrescar...
 
 
 CONSULTANDO EQUIPO
-
 -------------------------------------------------------------------------------------------------------------------------------------
 EQUIPO: hostname
 
