@@ -1,12 +1,16 @@
 # Script de consulta de Active Directory en PowerShell - Lucas S. Paniagua Baez -
+echo "Bienvenido al script de consulta de usuarios y equipos de Active Directory`n`nPara copiar un texto, selecciona el texto y luego clic derecho al mismo.`n`n"
+
 
 $nueva_consulta = $true
 while ($true) {
 # Solicitar al usuario que ingrese el login o hostname para consultar
 
     if($nueva_consulta -eq $true){
-    $input = Read-Host -Prompt "Ingrese el login del usuario o el nombre del equipo"
-    cls
+        do{
+        $input = Read-Host -Prompt "Ingrese el login del usuario o el nombre del equipo"
+        cls
+        }while ($input -eq "")
     }
     # Realizar la consulta de usuarios en Active Directory
     $usuarioAD = Get-AdUser -Filter {SamAccountName -eq $input} -Properties DisplayName,EmailAddress,SamAccountName,Department,Enabled,LockedOut,MemberOf,msDS-UserPasswordExpiryTimeComputed,PwdLastSet,Manager,OfficePhone
@@ -53,25 +57,25 @@ while ($true) {
     Write-Host "`n`nPresione 'Enter' para realizar otra consulta o 'R' para refrescar..."
     }elseif($equipoAD -ne $null){
         Write-Host "EQUIPO: $($equipoAD.Name)"
-        Write-Host "`n`n    -------DATOS DEL EQUIPO-------`n"
+        Write-Host "`n`n    ------- DATOS DEL EQUIPO -------`n"
         Write-Host "Nombre: $($equipoAD.Name)"
         Write-Host "Direccion IP: $($equipoAD.IPv4Address)"
         Write-Host "Sistema Operativo: $($equipoAD.OperatingSystem)"
         Write-Host "Version de compilacion: $($equipoAD.OperatingSystemVersion)"
-        Write-Host "Ultimo acceso: $($equipoAD.LastLogonDate)"
-        Write-Host "Clave SVCUAC: $(Get-LapsADPassword $input -AsPlainText | Select-Object -ExpandProperty Password)"
+        Write-Host "Actualizado: $($equipoAD.LastLogonDate)"
         Write-Host "Ruta: $($equipoAD.CanonicalName)"
     
 
-        Write-Host "`n`n    -------SITUACION DEL EQUIPO-------`n"
+        Write-Host "`n`n    ------- SITUACION DEL EQUIPO -------`n"
+        Write-Host "`nClave SVCUAC: $(Get-LapsADPassword $input -AsPlainText | Select-Object -ExpandProperty Password)"
         if($equipoAD.MemberOf -contains (Get-ADGroup 'ALLOW_SITM_Lock_Computers').DistinguishedName){
-            Write-Host "El equipo esta BLOQUEADO!!! Falta regularizar su catastro."
+            Write-Host "`nEl equipo esta BLOQUEADO!!! Falta regularizar su catastro."
             }elseif($equipoAD.Enabled -and !$equipoAD.LockedOut){
-                Write-Host "El equipo se encuentra habilitado"
+                Write-Host "`nEl equipo se encuentra habilitado"
                 }    
 
 
-        Write-Host "`n`n    -------GRUPOS A LOS QUE PERTENECE EL EQUIPO-------`n"
+        Write-Host "`n`n    ------- GRUPOS A LOS QUE PERTENECE -------`n"
         foreach ($grupo in $equipoAD.MemberOf) {
                   $nombreGrupo = (Get-ADGroup $grupo).Name
                   Write-Host "- $nombreGrupo"
