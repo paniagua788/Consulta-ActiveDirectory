@@ -1,12 +1,15 @@
-**CONSULTA DE USUARIOS ACTIVE DIRECTORY**
+CONSULTA DE USUARIOS ACTIVE DIRECTORY
+-------------------------------------------------------------------------------------------------------------------------------------
+
 
 Este es un script escrito en powershell, que mediante el complemento RSAT realiza una consulta de usuarios y equipos del actual Directorio Activo de Windows.
 
 Salida de ejemplo:
 
-CONSULTANDO USUARIO
------------------------------------------------------------------------------------------------------------------------------------
+**CONSULTANDO USUARIO**
 
+-----------------------------------------------------------------------------------------------------------------------------------
+```
 USUARIO: user
 
 
@@ -37,17 +40,19 @@ USUARIO: user
 
 
 Presione 'Enter' para realizar otra consulta o 'R' para refrescar...
+```
 
+
+
+
+**CONSULTANDO EQUIPO**
 
 -------------------------------------------------------------------------------------------------------------------------------------
-
-
-CONSULTANDO EQUIPO
--------------------------------------------------------------------------------------------------------------------------------------
+```
 EQUIPO: hostname
 
 
-    -------DATOS DEL EQUIPO-------
+    ------- DATOS DEL EQUIPO -------
 
 Nombre: hostname
 Direccion IP: 192.168.1.10
@@ -58,12 +63,12 @@ Clave SVCUAC: clave_123 (la clave se muestra en texto plano)
 Ruta: <dominio>/Domain Resources/Clients/.../hostname
 
 
-    -------SITUACION DEL EQUIPO-------
+    ------- SITUACION DEL EQUIPO -------
 
 El equipo se encuentra habilitado / El equipo esta BLOQUEADO
 
 
-    -------GRUPOS A LOS QUE PERTENECE EL EQUIPO-------
+    ------- GRUPOS A LOS QUE PERTENECE EL EQUIPO -------
 
 - Grupo 1
 - Grupo 2
@@ -71,3 +76,4 @@ El equipo se encuentra habilitado / El equipo esta BLOQUEADO
 
 
 Presione 'Enter' para realizar otra consulta o 'R' para refrescar...
+```
