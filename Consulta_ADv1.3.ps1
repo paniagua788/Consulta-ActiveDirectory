@@ -10,7 +10,7 @@ while ($true) {
         do{
         $input = Read-Host -Prompt "Ingrese el login del usuario o el nombre del equipo"
         cls
-        }while ($input -eq "")
+        }while (($input -eq "") -or ($input -eq " "))
     }
     # Realizar la consulta de usuarios en Active Directory
     $usuarioAD = Get-AdUser -Filter {SamAccountName -eq $input} -Properties DisplayName,EmailAddress,SamAccountName,Department,Enabled,LockedOut,MemberOf,msDS-UserPasswordExpiryTimeComputed,PwdLastSet,Manager,OfficePhone
