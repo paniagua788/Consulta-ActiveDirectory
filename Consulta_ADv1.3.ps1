@@ -14,7 +14,7 @@ while ($true) {
     }
     # Realizar la consulta de usuarios en Active Directory
     $usuarioAD = Get-AdUser -Filter {SamAccountName -eq $input} -Properties DisplayName,EmailAddress,SamAccountName,Department,Enabled,LockedOut,MemberOf,msDS-UserPasswordExpiryTimeComputed,PwdLastSet,Manager,OfficePhone
-    $equipoAD= Get-ADComputer -Filter {Name -eq $input} -Properties Name,OperatingSystem,Description,Enabled,LastLogonDate,VersionNumber,IPv4Address,MemberOf,CanonicalName,LockedOut,OperatingSystemVersion
+    $equipoAD= Get-ADComputer -Filter {Name -eq $input} -Properties Name,OperatingSystem,Description,Enabled,LastLogonDate,VersionNumber,IPv4Address,MemberOf,CanonicalName,LockedOut,OperatingSystemVersion, msLAPS-PasswordExpirationTime
 
     # Verificar si existe el usuario
     if ($usuarioAD -ne $null) {
@@ -62,12 +62,12 @@ while ($true) {
         Write-Host "Direccion IP: $($equipoAD.IPv4Address)"
         Write-Host "Sistema Operativo: $($equipoAD.OperatingSystem)"
         Write-Host "Version de compilacion: $($equipoAD.OperatingSystemVersion)"
-        Write-Host "Actualizado: $($equipoAD.LastLogonDate)"
         Write-Host "Ruta: $($equipoAD.CanonicalName)"
     
 
         Write-Host "`n`n    ------- SITUACION DEL EQUIPO -------`n"
         Write-Host "`nClave SVCUAC: $(Get-LapsADPassword $input -AsPlainText | Select-Object -ExpandProperty Password)"
+        Write-Host "`nActualizado: $([System.DateTime]::FromFileTime($equipoAD."msLAPS-PasswordExpirationTime").ToString('dd-MM-yyyy HH:mm:ss'))"        
         if($equipoAD.MemberOf -contains (Get-ADGroup 'ALLOW_SITM_Lock_Computers').DistinguishedName){
             Write-Host "`nEl equipo esta BLOQUEADO!!! Falta regularizar su catastro."
             }elseif($equipoAD.Enabled -and !$equipoAD.LockedOut){
