@@ -13,7 +13,7 @@ while ($true) {
         }while (($input -eq "") -or ($input -eq " "))
     }
     # Realizar la consulta de usuarios en Active Directory
-    $usuarioAD = Get-AdUser -Filter {SamAccountName -eq $input} -Properties DisplayName,EmailAddress,SamAccountName,Department,Enabled,LockedOut,MemberOf,msDS-UserPasswordExpiryTimeComputed,PwdLastSet,Manager,OfficePhone
+    $usuarioAD = Get-AdUser -Filter {SamAccountName -eq $input} -Properties DisplayName,EmailAddress,SamAccountName,Department,Enabled,LockedOut,MemberOf,msDS-UserPasswordExpiryTimeComputed,PwdLastSet,Manager,OfficePhone, PasswordNeverExpires
     $equipoAD= Get-ADComputer -Filter {Name -eq $input} -Properties Name,OperatingSystem,Description,Enabled,LastLogonDate,VersionNumber,IPv4Address,MemberOf,CanonicalName,LockedOut,OperatingSystemVersion, msLAPS-PasswordExpirationTime
 
     # Verificar si existe el usuario
@@ -41,7 +41,11 @@ while ($true) {
             }else{
             Write-Host " La contraseña se encuentra desbloqueada`n" }
             Write-Host " Ultimo cambio de contraseña: $([System.DateTime]::FromFileTime($usuarioAD.'PwdLastSet').ToString('dd-MM-yyyy HH:mm:ss'))"
-            Write-Host " Fecha de expiracion de contraseña: $([System.DateTime]::FromFileTime($usuarioAD.'msDS-UserPasswordExpiryTimeComputed').ToString('dd-MM-yyyy HH:mm:ss'))"
+            if($usuarioAD.PasswordNeverExpires -eq $true){
+                    Write-Host " La contraseña nunca expira"
+            }else{
+                    Write-Host " Fecha de expiracion de contraseña: $([System.DateTime]::FromFileTime($usuarioAD.'msDS-UserPasswordExpiryTimeComputed').ToString('dd-MM-yyyy HH:mm:ss'))"
+            }    
 
             if($usuarioAD.MemberOf -contains (Get-ADGroup 'GIBSIPBLOQUEADOS').DistinguishedName){
                 Write-Host "`n EL USUARIO SE ENCUENTRA BLOQUEADO POR VACACIONES!!`n"
