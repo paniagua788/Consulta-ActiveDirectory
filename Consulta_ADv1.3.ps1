@@ -15,9 +15,11 @@ while ($true) {
     # Realizar la consulta de usuarios en Active Directory
     $usuarioAD = Get-AdUser -Filter {SamAccountName -eq $input} -Properties DisplayName,EmailAddress,SamAccountName,Department,Enabled,LockedOut,MemberOf,msDS-UserPasswordExpiryTimeComputed,PwdLastSet,Manager,OfficePhone, PasswordNeverExpires
     $equipoAD= Get-ADComputer -Filter {Name -eq $input} -Properties Name,OperatingSystem,Description,Enabled,LastLogonDate,VersionNumber,IPv4Address,MemberOf,CanonicalName,LockedOut,OperatingSystemVersion, msLAPS-PasswordExpirationTime
+    
 
-    # Verificar si existe el usuario
-    if ($usuarioAD -ne $null) {
+
+    # Funcion que consulta datos del usuario    
+    function consulta_user($usuarioAD){
         Write-Host "USUARIO: $($usuarioAD.SamAccountName)"
         Write-Host "`n`n    -------  Datos del usuario  -------`n"
         Write-Host " Nombre completo: $($usuarioAD.DisplayName)"
@@ -57,9 +59,12 @@ while ($true) {
                   Write-Host " $nombreGrupo"
                 }
     
+        
+    }
+    
+    # Funcion que consutla datos de equipo
+    function consulta_desktop($equipoAD){    
 
-    Write-Host "`n`nPresione 'Enter' para realizar otra consulta o 'R' para refrescar..."
-    }elseif($equipoAD -ne $null){
         Write-Host "EQUIPO: $($equipoAD.Name)"
         Write-Host "`n`n    ------- DATOS DEL EQUIPO -------`n"
         Write-Host "Nombre: $($equipoAD.Name)"
@@ -70,7 +75,7 @@ while ($true) {
     
 
         Write-Host "`n`n    ------- SITUACION DEL EQUIPO -------`n"
-        Write-Host "`nClave SVCUAC: $(Get-LapsADPassword $input -AsPlainText | Select-Object -ExpandProperty Password)"
+        Write-Host "`nClave SVCUAC: $(Get-LapsADPassword $equipoAD -AsPlainText | Select-Object -ExpandProperty Password)"
         Write-Host "`nActualizado: $([System.DateTime]::FromFileTime($equipoAD."msLAPS-PasswordExpirationTime").ToString('dd-MM-yyyy HH:mm:ss'))"        
         if($equipoAD.MemberOf -contains (Get-ADGroup 'ALLOW_SITM_Lock_Computers').DistinguishedName){
             Write-Host "`nEl equipo esta BLOQUEADO!!! Falta regularizar su catastro."
@@ -84,13 +89,35 @@ while ($true) {
                   $nombreGrupo = (Get-ADGroup $grupo).Name
                   Write-Host "- $nombreGrupo"
                   }
-    Write-Host "`n`nPresione 'Enter' para realizar otra consulta o 'R' para refrescar..."
     
+    }    
+    
+    
+    
+
+
+
+    
+    # Verificar si existen el usuario y/o el equipo
+    if (($usuarioAD -ne $null) -and ($equipoAD -ne $null) ) {
+        consulta_user($usuarioAD)
+        Write-Host "`n`n ------------------------------------------------------------------------------------`n"
+        consulta_desktop($equipoAD)
+        Write-Host "`n`nPresione 'Enter' para realizar otra consulta o 'R' para refrescar..."
+        }elseif($usuarioAD -ne $null){
+        consulta_user($usuarioAD)
+        Write-Host "`n`nPresione 'Enter' para realizar otra consulta o 'R' para refrescar..."
+        }elseif($equipoAD -ne $null){
+        consulta_desktop($equipoAD)
+        Write-Host "`n`nPresione 'Enter' para realizar otra consulta o 'R' para refrescar..."
+
     }else {
         Write-Host "`n`nUsuario/Equipo no encontrado en Active Directory.`n`n`n`nPresione 'Enter' para realizar otra consulta."
             
     }
-    
+
+
+
     
     do{
         $respuesta = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown").Character
