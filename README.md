@@ -58,12 +58,14 @@ Nombre: hostname
 Direccion IP: 192.168.1.10
 Sistema Operativo: Windows 11 Pro
 Version de compilacion: 10.0 (22621)
-Ultimo acceso: 04/27/2024 10:17:41
-Clave SVCUAC: clave_123 (la clave se muestra en texto plano)
 Ruta: <dominio>/Domain Resources/Clients/.../hostname
 
 
     ------- SITUACION DEL EQUIPO -------
+
+Clave SVCUAC:
+
+Actualizado: 31-12-1600 21:00:00
 
 El equipo se encuentra habilitado / El equipo esta BLOQUEADO
 
